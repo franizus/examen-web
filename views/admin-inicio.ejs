@@ -1,0 +1,27 @@
+<%- include('common/header',{titulo:titulo,
+esAdministrador:esAdministrador,esUsuario:esUsuario}) %>
+
+<div class="container">
+  <form action="/Usuario/inicio" method="get">
+    <div class="row">
+      <div class="col-sm-9">
+        <div class="form-group">
+          <label for="busqueda">Busqueda</label>
+          <input
+            id="busqueda"
+            type="text"
+            class="form-control"
+            name="busqueda"
+          />
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <button class="btn btn-outline-info btn-block btn-buscar" type="submit">
+          Buscar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<%- include('common/libraries') %>
