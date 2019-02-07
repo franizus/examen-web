@@ -17,10 +17,8 @@ export class UsuarioService {
   }
 
   async crear(nuevoUsuario: Usuario): Promise<UsuarioEntity> {
-    // Instanciar una entidad -> .create()
     const usuarioEntity = this._usuarioRepository.create(nuevoUsuario);
 
-    // Guardar una entidad en la BDD -> .save()
     const usuarioCreado = await this._usuarioRepository.save(usuarioEntity);
 
     return usuarioCreado;
@@ -35,7 +33,6 @@ export class UsuarioService {
   }
 
   borrar(idUsuario: number): Promise<UsuarioEntity> {
-    // CREA UNA INSTANCIA DE LA ENTIDAD
     const usuarioEntityAEliminar = this._usuarioRepository.create({
       id: idUsuario,
     });
@@ -44,11 +41,9 @@ export class UsuarioService {
   }
 
   buscarPorId(idUsuario: number): Promise<UsuarioEntity> {
-    return this._usuarioRepository.findOne(idUsuario);
-  }
-
-  async obtenerRoles(idUsuario: number) {
-    const usuarioEncontrado = await this._usuarioRepository.findOne(idUsuario);
+    return this._usuarioRepository.findOne(idUsuario, {
+      relations: ['roles'],
+    });
   }
 
   async login(correo: string, password: string): Promise<UsuarioEntity> {

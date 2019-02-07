@@ -1,8 +1,7 @@
-<%- include('common/header',{titulo:titulo,
-esAdministrador:esAdministrador,esUsuario:esUsuario}) %>
+<%- include('common/header',{titulo:titulo}) %>
 
 <div class="container">
-  <form action="/register" method="POST">
+  <form action="/usuario/register" method="POST">
     <div class="form-group">
       <label for="nombre">Nombre</label>
       <input type="text" class="form-control" id="nombre" name="nombre" />

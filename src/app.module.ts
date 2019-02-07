@@ -1,3 +1,7 @@
+import { EventoEntity } from 'src/evento/evento-entity';
+import { JugadorEntity } from './jugador/jugador-entity';
+import { EquipoEntity } from 'src/equipo-futbol/equipo-entity';
+import { AdministradorModule } from './administrador/administrador.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { UsuarioEntity } from './usuario/usuario-entity';
 import { Module } from '@nestjs/common';
@@ -17,9 +21,16 @@ import { RolEntity } from './rol/rol-entity';
       database: 'examenweb',
       synchronize: true,
       dropSchema: false,
-      entities: [UsuarioEntity, RolEntity],
+      entities: [
+        UsuarioEntity,
+        RolEntity,
+        EquipoEntity,
+        JugadorEntity,
+        EventoEntity,
+      ],
     }),
     UsuarioModule,
+    AdministradorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

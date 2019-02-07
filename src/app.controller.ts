@@ -20,8 +20,6 @@ export class AppController {
   login(@Res() response) {
     response.render('login', {
       titulo: 'Registro',
-      esUsuario: true,
-      esAdministrador: true,
     });
   }
 
@@ -55,31 +53,6 @@ export class AppController {
   register(@Res() response) {
     response.render('register', {
       titulo: 'Registro',
-      esUsuario: true,
-      esAdministrador: true,
     });
-  }
-
-  @Post('register')
-  async registerUser(@Body() usuario: Usuario, @Res() response) {
-    const usuarioValidado = new UsuarioCreateDto();
-
-    usuarioValidado.nombre = usuario.nombre;
-    usuarioValidado.correo = usuario.correo;
-    usuarioValidado.password = usuario.password;
-    usuarioValidado.fecha_nacimiento = usuario.fecha_nacimiento;
-
-    const errores: ValidationError[] = await validate(usuarioValidado);
-
-    const hayErrores = errores.length > 0;
-
-    if (hayErrores) {
-      console.error(errores);
-      response.redirect('/register?error=Hay errores');
-    } else {
-      await this._usuarioService.crear(usuario);
-
-      response.redirect('/login');
-    }
   }
 }

@@ -21,7 +21,7 @@ async function bootstrap() {
     }),
   );
 
-  app.use(express.static('publico'));
+  app.use(express.static('public'));
 
   await app.listen(3000);
 }

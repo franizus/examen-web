@@ -1,9 +1,10 @@
 import { UsuarioModule } from './../usuario/usuario.module';
 import { Module } from '@nestjs/common';
 import { AdministradorController } from './administrador.controller';
+import { RolModule } from 'src/rol/rol.module';
 
 @Module({
-  imports: [UsuarioModule],
+  imports: [UsuarioModule, RolModule],
   controllers: [AdministradorController],
   providers: [],
   exports: [],
