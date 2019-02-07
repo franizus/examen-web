@@ -32,7 +32,7 @@ export class JugadorEntity {
   @Column()
   goles: number;
 
-  @ManyToMany(type => EventoEntity)
+  @ManyToMany(type => EventoEntity, evento => evento.jugadores)
   @JoinTable()
   eventos: EventoEntity[];
 

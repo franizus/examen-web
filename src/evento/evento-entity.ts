@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { JugadorEntity } from './../jugador/jugador-entity';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 
 @Entity('evento')
 export class EventoEntity {
@@ -9,8 +10,14 @@ export class EventoEntity {
   nombre: string;
 
   @Column()
+  fecha: string;
+
+  @Column()
   latitud: string;
 
   @Column()
   longitud: string;
+
+  @ManyToMany(type => JugadorEntity, jugador => jugador.eventos)
+  jugadores: JugadorEntity[];
 }

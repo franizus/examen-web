@@ -34,7 +34,7 @@ export class AppController {
 
     if (identificado) {
       sesion.usuario = identificado;
-      console.log(sesion);
+      //console.log(sesion);
 
       response.redirect('/');
     } else {
@@ -53,6 +53,13 @@ export class AppController {
   register(@Res() response) {
     response.render('register', {
       titulo: 'Registro',
+    });
+  }
+
+  @Get('sin-permiso')
+  sinPermiso(@Res() response) {
+    response.render('sin-permiso', {
+      titulo: 'Sin Permiso',
     });
   }
 }

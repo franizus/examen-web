@@ -1,3 +1,5 @@
+import { JugadorModule } from './jugador/jugador.module';
+import { EventoModule } from './evento/evento.module';
 import { EventoEntity } from 'src/evento/evento-entity';
 import { JugadorEntity } from './jugador/jugador-entity';
 import { EquipoEntity } from 'src/equipo-futbol/equipo-entity';
@@ -9,6 +11,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RolEntity } from './rol/rol-entity';
+import { EquipoModule } from './equipo-futbol/equipo.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { RolEntity } from './rol/rol-entity';
     }),
     UsuarioModule,
     AdministradorModule,
+    EventoModule,
+    JugadorModule,
+    EquipoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

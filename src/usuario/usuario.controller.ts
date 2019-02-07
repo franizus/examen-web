@@ -1,6 +1,6 @@
 import { RolService } from './../rol/rol.service';
 import { UsuarioCreateDto } from './dto/usuario-create.dto';
-import { Controller, Post, Param, Res, Body } from '@nestjs/common';
+import { Controller, Post, Param, Res, Body, Get } from '@nestjs/common';
 import { UsuarioService, Usuario } from './usuario.service';
 import { ValidationError, validate } from 'class-validator';
 

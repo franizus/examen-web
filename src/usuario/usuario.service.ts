@@ -1,7 +1,7 @@
 import { UsuarioEntity } from './usuario-entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindManyOptions, getRepository } from 'typeorm';
+import { Repository, FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
@@ -42,7 +42,7 @@ export class UsuarioService {
 
   buscarPorId(idUsuario: number): Promise<UsuarioEntity> {
     return this._usuarioRepository.findOne(idUsuario, {
-      relations: ['roles'],
+      relations: ['roles', 'equipos'],
     });
   }
 
