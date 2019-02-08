@@ -1,4 +1,12 @@
-import { Controller, Get, Res, Post, Body, Session } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  Post,
+  Body,
+  Session,
+  Query,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { UsuarioService } from './usuario/usuario.service';
 
@@ -31,7 +39,7 @@ export class AppController {
   }
 
   @Get('login')
-  login(@Res() response, @Session() sesion) {
+  login(@Res() response, @Session() sesion, @Query('error') error: string) {
     let logedin = false;
     let esAdministrador = false;
     let esUsuario = false;
@@ -47,6 +55,7 @@ export class AppController {
       esUsuario: esUsuario,
       esAdministrador: esAdministrador,
       logedin: logedin,
+      error: error,
       nombreUsuario: nombreUsuario,
     });
   }
@@ -77,7 +86,7 @@ export class AppController {
   }
 
   @Get('register')
-  register(@Res() response, @Session() sesion) {
+  register(@Res() response, @Session() sesion, @Query('error') error: string) {
     let logedin = false;
     let esAdministrador = false;
     let esUsuario = false;
@@ -94,6 +103,7 @@ export class AppController {
       esAdministrador: esAdministrador,
       logedin: logedin,
       nombreUsuario: nombreUsuario,
+      error: error,
     });
   }
 

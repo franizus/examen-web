@@ -32,7 +32,7 @@ esAdministrador:esAdministrador,esUsuario:esUsuario,logedin:logedin,nombreUsuari
         <td><%= equipo.liga %></td>
         <td><%= equipo.fecha_creacion %></td>
         <td><%= equipo.numero_copas_internacionales %></td>
-        <td><%= equipo.campeon_actual %></td>
+        <td><%= equipo.campeon_actual ? 'Si' : 'No'; %></td>
       </tr>
       <% }) %>
     </tbody>

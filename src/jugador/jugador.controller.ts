@@ -70,7 +70,11 @@ export class JugadorController {
   }
 
   @Get('crear')
-  async crearGet(@Res() response, @Session() sesion) {
+  async crearGet(
+    @Res() response,
+    @Session() sesion,
+    @Query('error') error: string,
+  ) {
     if (sesion.usuario) {
       const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
       const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
@@ -87,6 +91,7 @@ export class JugadorController {
           esAdministrador: esAdministrador,
           logedin: true,
           nombreUsuario: sesion.usuario.nombre,
+          error: error,
         });
       } else {
         response.redirect('/sin-permiso');

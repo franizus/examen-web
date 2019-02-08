@@ -3,6 +3,15 @@ esAdministrador:esAdministrador,esUsuario:esUsuario,logedin:logedin,nombreUsuari
 %>
 
 <div class="container mt-3 mb-5">
+  <% const errorb = typeof error !== "undefined" ? true : false; %> <%
+  if(errorb){ %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error!</strong> Al crear equipo.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
   <h3>Crear Equipo</h3>
   <form action="/equipo/crear" method="POST">
     <div class="form-group">
