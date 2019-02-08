@@ -18,35 +18,63 @@ export class EquipoController {
   constructor(private readonly _equipoService: EquipoService) {}
 
   @Get('inicio')
-  async inicio(@Res() response, @Query('busqueda') busqueda: string) {
-    let equipos: EquipoEntity[];
-    if (busqueda) {
-      const consulta = {
-        where: [
-          {
-            nombre: Like(`%${busqueda}%`),
-          },
-        ],
-      };
-      equipos = await this._equipoService.buscar(consulta);
-    } else {
-      equipos = await this._equipoService.buscar();
-    }
+  async inicio(
+    @Res() response,
+    @Query('busqueda') busqueda: string,
+    @Session() sesion,
+  ) {
+    if (sesion.usuario) {
+      const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      if (esUsuario) {
+        let equipos: EquipoEntity[];
+        if (busqueda) {
+          const consulta = {
+            where: [
+              {
+                nombre: Like(`%${busqueda}%`),
+              },
+            ],
+          };
+          equipos = await this._equipoService.buscar(consulta);
+        } else {
+          equipos = await this._equipoService.buscar();
+        }
 
-    response.render('equipo-inicio', {
-      titulo: 'Equipos',
-      arreglo: equipos,
-    });
+        response.render('equipo-inicio', {
+          titulo: 'Equipos',
+          arreglo: equipos,
+          esUsuario: esUsuario,
+          esAdministrador: esAdministrador,
+          logedin: true,
+          nombreUsuario: sesion.usuario.nombre,
+        });
+      } else {
+        response.redirect('/sin-permiso');
+      }
+    } else {
+      response.redirect('/');
+    }
   }
 
   @Get('crear')
   crearGet(@Res() response, @Session() sesion) {
-    if (sesion.usuario.roles.some(rol => rol.id === 2)) {
-      response.render('equipo-crear', {
-        titulo: 'Crear Equipo',
-      });
+    if (sesion.usuario) {
+      const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      if (esUsuario) {
+        response.render('equipo-crear', {
+          titulo: 'Crear Equipo',
+          esUsuario: esUsuario,
+          esAdministrador: esAdministrador,
+          logedin: true,
+          nombreUsuario: sesion.usuario.nombre,
+        });
+      } else {
+        response.redirect('/sin-permiso');
+      }
     } else {
-      response.redirect('/sin-permiso');
+      response.redirect('/');
     }
   }
 
@@ -56,30 +84,35 @@ export class EquipoController {
     @Res() response,
     @Session() sesion,
   ) {
-    const equipoValidado = new EquipoCreateDto();
-    const bValue = equipo.campeon_actual + '';
-    equipo.numero_copas_internacionales = +equipo.numero_copas_internacionales;
-    equipo.campeon_actual = bValue == 'true';
+    const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+    if (esUsuario) {
+      const equipoValidado = new EquipoCreateDto();
+      const bValue = equipo.campeon_actual + '';
+      equipo.numero_copas_internacionales = +equipo.numero_copas_internacionales;
+      equipo.campeon_actual = bValue == 'true';
 
-    equipoValidado.nombre = equipo.nombre;
-    equipoValidado.liga = equipo.liga;
-    equipoValidado.fecha_creacion = equipo.fecha_creacion;
-    equipoValidado.numero_copas_internacionales =
-      equipo.numero_copas_internacionales;
-    equipoValidado.campeon_actual = equipo.campeon_actual;
+      equipoValidado.nombre = equipo.nombre;
+      equipoValidado.liga = equipo.liga;
+      equipoValidado.fecha_creacion = equipo.fecha_creacion;
+      equipoValidado.numero_copas_internacionales =
+        equipo.numero_copas_internacionales;
+      equipoValidado.campeon_actual = equipo.campeon_actual;
 
-    const errores: ValidationError[] = await validate(equipoValidado);
+      const errores: ValidationError[] = await validate(equipoValidado);
 
-    const hayErrores = errores.length > 0;
+      const hayErrores = errores.length > 0;
 
-    equipo.usuario = sesion.usuario;
+      equipo.usuario = sesion.usuario;
 
-    if (hayErrores) {
-      console.error(errores);
-      response.redirect('/equipo/crear?error=Hay errores');
+      if (hayErrores) {
+        console.error(errores);
+        response.redirect('/equipo/crear?error=Hay errores');
+      } else {
+        await this._equipoService.crear(equipo);
+        response.redirect('/equipo/inicio');
+      }
     } else {
-      await this._equipoService.crear(equipo);
-      response.redirect('/equipo/inicio');
+      response.redirect('/sin-permiso');
     }
   }
 }

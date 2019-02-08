@@ -1,6 +1,14 @@
 import { RolService } from './../rol/rol.service';
 import { UsuarioCreateDto } from './dto/usuario-create.dto';
-import { Controller, Post, Param, Res, Body, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Param,
+  Res,
+  Body,
+  Get,
+  Session,
+} from '@nestjs/common';
 import { UsuarioService, Usuario } from './usuario.service';
 import { ValidationError, validate } from 'class-validator';
 
@@ -35,18 +43,27 @@ export class UsuarioController {
   }
 
   @Post('borrar/:idUsuario')
-  async borrar(@Param('idUsuario') idUsuario: string, @Res() response) {
-    const usuarioEncontrado = await this._usuarioService.buscarPorId(
-      +idUsuario,
-    );
+  async borrar(
+    @Param('idUsuario') idUsuario: string,
+    @Res() response,
+    @Session() sesion,
+  ) {
+    const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+    if (esAdministrador) {
+      const usuarioEncontrado = await this._usuarioService.buscarPorId(
+        +idUsuario,
+      );
 
-    await this._usuarioService.borrar(Number(idUsuario));
+      await this._usuarioService.borrar(Number(idUsuario));
 
-    const parametrosConsulta = `?accion=borrar&nombre=${
-      usuarioEncontrado.nombre
-    }`;
+      const parametrosConsulta = `?accion=borrar&nombre=${
+        usuarioEncontrado.nombre
+      }`;
 
-    response.redirect('/admin/inicio' + parametrosConsulta);
+      response.redirect('/admin/inicio' + parametrosConsulta);
+    } else {
+      response.redirect('/sin-permiso');
+    }
   }
 
   @Post('quitarRol/:idUsuario')
@@ -54,18 +71,24 @@ export class UsuarioController {
     @Param('idUsuario') idUsuario: string,
     @Res() response,
     @Body() body,
+    @Session() sesion,
   ) {
-    const usuario = await this._usuarioService.buscarPorId(Number(idUsuario));
+    const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+    if (esAdministrador) {
+      const usuario = await this._usuarioService.buscarPorId(Number(idUsuario));
 
-    const index = usuario.roles.findIndex(rolEntity => {
-      return rolEntity.id === +body.rol;
-    });
+      const index = usuario.roles.findIndex(rolEntity => {
+        return rolEntity.id === +body.rol;
+      });
 
-    usuario.roles.splice(index, 1);
+      usuario.roles.splice(index, 1);
 
-    await this._usuarioService.actualizar(+idUsuario, usuario);
+      await this._usuarioService.actualizar(+idUsuario, usuario);
 
-    response.redirect('/admin/editarRoles/' + idUsuario);
+      response.redirect('/admin/editarRoles/' + idUsuario);
+    } else {
+      response.redirect('/sin-permiso');
+    }
   }
 
   @Post('agregarRol/:idUsuario')
@@ -73,26 +96,32 @@ export class UsuarioController {
     @Param('idUsuario') idUsuario: string,
     @Res() response,
     @Body() body,
+    @Session() sesion,
   ) {
-    const usuario = await this._usuarioService.buscarPorId(Number(idUsuario));
-    const roles = await this._rolService.buscar();
+    const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+    if (esAdministrador) {
+      const usuario = await this._usuarioService.buscarPorId(Number(idUsuario));
+      const roles = await this._rolService.buscar();
 
-    const rol = roles.find(rol => {
-      return rol.id === +body.roles;
-    });
+      const rol = roles.find(rol => {
+        return rol.id === +body.roles;
+      });
 
-    const index = usuario.roles.findIndex(rolEntity => {
-      return rolEntity.id === +body.roles;
-    });
+      const index = usuario.roles.findIndex(rolEntity => {
+        return rolEntity.id === +body.roles;
+      });
 
-    let parametrosConsulta = '';
-    if (index >= 0) {
-      parametrosConsulta = '?error=yaExiste';
+      let parametrosConsulta = '';
+      if (index >= 0) {
+        parametrosConsulta = '?error=yaExiste';
+      } else {
+        usuario.roles.push(rol);
+        await this._usuarioService.actualizar(+idUsuario, usuario);
+      }
+
+      response.redirect('/admin/editarRoles/' + idUsuario + parametrosConsulta);
     } else {
-      usuario.roles.push(rol);
-      await this._usuarioService.actualizar(+idUsuario, usuario);
+      response.redirect('/sin-permiso');
     }
-
-    response.redirect('/admin/editarRoles/' + idUsuario + parametrosConsulta);
   }
 }

@@ -19,42 +19,56 @@ export class AdministradorController {
     @Query('busqueda') busqueda: string,
     @Session() sesion,
   ) {
-    let mensaje; // undefined
-    let clase; // undefined
+    if (sesion.usuario) {
+      const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      if (esAdministrador) {
+        let mensaje; // undefined
+        let clase; // undefined
 
-    if (accion && nombre) {
-      switch (accion) {
-        case 'actualizar':
-          clase = 'info';
-          mensaje = `Registro ${nombre} actualizado`;
-          break;
-        case 'borrar':
-          clase = 'danger';
-          mensaje = `Registro ${nombre} eliminado`;
-          break;
+        if (accion && nombre) {
+          switch (accion) {
+            case 'actualizar':
+              clase = 'info';
+              mensaje = `Registro ${nombre} actualizado`;
+              break;
+            case 'borrar':
+              clase = 'danger';
+              mensaje = `Registro ${nombre} eliminado`;
+              break;
+          }
+        }
+
+        let usuarios: UsuarioEntity[];
+        if (busqueda) {
+          const consulta = {
+            where: [
+              {
+                nombre: Like(`%${busqueda}%`),
+              },
+              {
+                correo: Like(`%${busqueda}%`),
+              },
+            ],
+          };
+          usuarios = await this._usuarioService.buscar(consulta);
+        } else {
+          usuarios = await this._usuarioService.buscar();
+        }
+        response.render('admin-inicio', {
+          titulo: 'Administrador - Inicio',
+          arreglo: usuarios,
+          esUsuario: esUsuario,
+          esAdministrador: esAdministrador,
+          logedin: true,
+          nombreUsuario: sesion.usuario.nombre,
+        });
+      } else {
+        response.redirect('/sin-permiso');
       }
-    }
-
-    let usuarios: UsuarioEntity[];
-    if (busqueda) {
-      const consulta = {
-        where: [
-          {
-            nombre: Like(`%${busqueda}%`),
-          },
-          {
-            correo: Like(`%${busqueda}%`),
-          },
-        ],
-      };
-      usuarios = await this._usuarioService.buscar(consulta);
     } else {
-      usuarios = await this._usuarioService.buscar();
+      response.redirect('/');
     }
-    response.render('admin-inicio', {
-      titulo: 'Administrador - Inicio',
-      arreglo: usuarios,
-    });
   }
 
   @Get('editarRoles/:idUsuario')
@@ -62,18 +76,33 @@ export class AdministradorController {
     @Param('idUsuario') idUsuario: string,
     @Res() response,
     @Query('error') error: string,
+    @Session() sesion,
   ) {
-    const usuarioAActualizar = await this._usuarioService.buscarPorId(
-      Number(idUsuario),
-    );
+    if (sesion.usuario) {
+      const esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      const esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      if (esAdministrador) {
+        const usuarioAActualizar = await this._usuarioService.buscarPorId(
+          Number(idUsuario),
+        );
 
-    const roles = await this._rolService.buscar();
+        const roles = await this._rolService.buscar();
 
-    response.render('admin-editar', {
-      usuario: usuarioAActualizar,
-      roles: roles,
-      error: error,
-      titulo: 'Administrdor - Editar Roles',
-    });
+        response.render('admin-editar', {
+          usuarioActualizar: usuarioAActualizar,
+          roles: roles,
+          error: error,
+          esUsuario: esUsuario,
+          esAdministrador: esAdministrador,
+          logedin: true,
+          nombreUsuario: sesion.usuario.nombre,
+          titulo: 'Administrdor - Editar Roles',
+        });
+      } else {
+        response.redirect('/sin-permiso');
+      }
+    } else {
+      response.redirect('/');
+    }
   }
 }

@@ -1,8 +1,6 @@
-import { UsuarioCreateDto } from './usuario/dto/usuario-create.dto';
 import { Controller, Get, Res, Post, Body, Session } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Usuario, UsuarioService } from './usuario/usuario.service';
-import { ValidationError, validate } from 'class-validator';
+import { UsuarioService } from './usuario/usuario.service';
 
 @Controller()
 export class AppController {
@@ -12,14 +10,44 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  getHello(@Res() response, @Session() sesion) {
+    let logedin = false;
+    let esAdministrador = false;
+    let esUsuario = false;
+    let nombreUsuario = '';
+    if (sesion.usuario) {
+      esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      logedin = true;
+      nombreUsuario = sesion.usuario.nombre;
+    }
+    response.render('inicio', {
+      titulo: 'Inicio',
+      esUsuario: esUsuario,
+      esAdministrador: esAdministrador,
+      logedin: logedin,
+      nombreUsuario: nombreUsuario,
+    });
   }
 
   @Get('login')
-  login(@Res() response) {
+  login(@Res() response, @Session() sesion) {
+    let logedin = false;
+    let esAdministrador = false;
+    let esUsuario = false;
+    let nombreUsuario = '';
+    if (sesion.usuario) {
+      esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      logedin = true;
+      nombreUsuario = sesion.usuario.nombre;
+    }
     response.render('login', {
       titulo: 'Registro',
+      esUsuario: esUsuario,
+      esAdministrador: esAdministrador,
+      logedin: logedin,
+      nombreUsuario: nombreUsuario,
     });
   }
 
@@ -34,7 +62,6 @@ export class AppController {
 
     if (identificado) {
       sesion.usuario = identificado;
-      //console.log(sesion);
 
       response.redirect('/');
     } else {
@@ -46,20 +73,48 @@ export class AppController {
   logout(@Res() response, @Session() sesion) {
     sesion.usuario = undefined;
     sesion.destroy();
-    response.redirect('/login');
+    response.redirect('/');
   }
 
   @Get('register')
-  register(@Res() response) {
+  register(@Res() response, @Session() sesion) {
+    let logedin = false;
+    let esAdministrador = false;
+    let esUsuario = false;
+    let nombreUsuario = '';
+    if (sesion.usuario) {
+      esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      logedin = true;
+      nombreUsuario = sesion.usuario.nombre;
+    }
     response.render('register', {
       titulo: 'Registro',
+      esUsuario: esUsuario,
+      esAdministrador: esAdministrador,
+      logedin: logedin,
+      nombreUsuario: nombreUsuario,
     });
   }
 
   @Get('sin-permiso')
-  sinPermiso(@Res() response) {
+  sinPermiso(@Res() response, @Session() sesion) {
+    let logedin = false;
+    let esAdministrador = false;
+    let esUsuario = false;
+    let nombreUsuario = '';
+    if (sesion.usuario) {
+      esAdministrador = sesion.usuario.roles.some(rol => rol.id === 1);
+      esUsuario = sesion.usuario.roles.some(rol => rol.id === 2);
+      logedin = true;
+      nombreUsuario = sesion.usuario.nombre;
+    }
     response.render('sin-permiso', {
       titulo: 'Sin Permiso',
+      esUsuario: esUsuario,
+      esAdministrador: esAdministrador,
+      logedin: logedin,
+      nombreUsuario: nombreUsuario,
     });
   }
 }

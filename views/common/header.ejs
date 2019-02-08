@@ -1,4 +1,5 @@
-<% const tieneTitulo = typeof titulo !== 'undefined'; %>
+<% const tieneTitulo = typeof titulo !== 'undefined'; %> <% const
+tieneNombreUsuario = typeof nombreUsuario !== 'undefined'; %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +18,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="/">Examen Web GR2</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -32,23 +33,78 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#"
-              >Home <span class="sr-only">(current)</span></a
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
             >
-          </li>
-          <li class="nav-item">
-            <a href="/evento/crear" class="nav-link">
-              Crear Evento
+              Eventos
             </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/evento/inicio">Ver</a>
+              <% if(esUsuario){ %>
+              <a class="dropdown-item" href="/evento/crear">Crear</a>
+              <% } %>
+            </div>
           </li>
+          <% if(esUsuario){ %>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/inicio">Roles-Usuario</a>
+          </li>
+          <% } %> <% if(esUsuario){ %>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Equipos
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/equipo/inicio">Ver</a>
+              <a class="dropdown-item" href="/equipo/crear">Crear</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Jugadores
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/jugador/inicio">Ver</a>
+              <a class="dropdown-item" href="/jugador/crear">Crear</a>
+            </div>
+          </li>
+          <% } %>
         </ul>
         <span class="navbar-text mr-3 text-light">
-          Usuario
+          <%= tieneNombreUsuario ? nombreUsuario : '' %>
         </span>
+        <% if(logedin){ %>
         <form class="form-inline">
           <a class="btn btn-light" href="/logout">Logout</a>
         </form>
+        <% } else { %>
+        <form class="form-inline">
+          <a class="btn btn-light" href="/login">Login</a>
+        </form>
+        <% } %>
       </div>
     </nav>
   </body>

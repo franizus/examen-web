@@ -1,4 +1,6 @@
-<%- include('common/header',{titulo:titulo}) %>
+<%- include('common/header',{titulo:titulo,
+esAdministrador:esAdministrador,esUsuario:esUsuario,logedin:logedin,nombreUsuario:nombreUsuario})
+%>
 
 <div class="container">
   <form action="/evento/inicio" method="GET">

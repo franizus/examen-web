@@ -1,4 +1,6 @@
-<%- include('common/header',{titulo:titulo}) %>
+<%- include('common/header',{titulo:titulo,
+esAdministrador:esAdministrador,esUsuario:esUsuario,logedin:logedin,nombreUsuario:nombreUsuario})
+%>
 
 <div class="container mt-5">
   <% const errorb = typeof error !== "undefined" ? true : false; %> <%
@@ -29,7 +31,7 @@
             class="form-control"
             id="nombre"
             name="nombre"
-            value="<%= usuario.nombre %>"
+            value="<%= usuarioActualizar.nombre %>"
           />
         </div>
         <div class="form-group">
@@ -40,7 +42,7 @@
             class="form-control"
             id="correo"
             name="correo"
-            value="<%= usuario.correo %>"
+            value="<%= usuarioActualizar.correo %>"
           />
         </div>
         <div class="form-group">
@@ -51,16 +53,16 @@
             class="form-control"
             id="fecha_nacimiento"
             name="fecha_nacimiento"
-            value="<%= usuario.fecha_nacimiento %>"
+            value="<%= usuarioActualizar.fecha_nacimiento %>"
           />
         </div>
       </form>
     </div>
     <div class="col-sm-4">
-      <% usuario.roles.forEach((rol)=>{ %>
+      <% usuarioActualizar.roles.forEach((rol)=>{ %>
       <div class="chip">
         <form
-          action="/usuario/quitarRol/<%= usuario.id %>"
+          action="/usuario/quitarRol/<%= usuarioActualizar.id %>"
           method="POST"
           id="<%= rol.nombre %>"
         >
@@ -76,7 +78,10 @@
       <% }) %>
     </div>
     <div class="col-sm-3">
-      <form action="/usuario/agregarRol/<%= usuario.id %>" method="POST">
+      <form
+        action="/usuario/agregarRol/<%= usuarioActualizar.id %>"
+        method="POST"
+      >
         <div class="form-group">
           <label for="roles">Agregar Roles</label>
           <select name="roles" class="form-control" id="roles">
